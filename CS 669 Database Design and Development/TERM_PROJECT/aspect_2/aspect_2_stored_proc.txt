@@ -1,0 +1,30 @@
+CREATE OR ALTER PROCEDURE DELIVER_TO_AMAZON 
+ @product_id DECIMAL(10), -- product ID (foreign key)
+ @seller_id DECIMAL(10), -- sellers ID (foreign key)
+ @condition VARCHAR(255), -- condition of the product
+ @description VARCHAR(255), -- description of the product
+ @unit_count DECIMAL(10) -- number of units to insert into the table
+AS 
+BEGIN
+	-- loops through number of units
+	DECLARE @i DECIMAL
+	SET @i = 1
+	WHILE (@i <= @unit_count)
+	BEGIN
+		-- insert data into the unit table
+		INSERT INTO UNIT
+		(product_id, seller_id, condition, description)
+		VALUES(@product_id, @seller_id, @condition, @description);
+		-- if the unit exists, insert data into the sellers_inventory table
+		IF EXISTS (SELECT 1 FROM unit WHERE seller_id = @seller_id)
+		BEGIN
+			INSERT INTO sellers_inventory(seller_id, product_id)
+			VALUES(@seller_id, @product_id);
+		END
+		SET @i = @i + 1;  -- iterate through the loop
+	END --ends while
+END; -- ends proc
+
+-- product_id, seller_id, condition, description, unit count
+EXECUTE DELIVER_TO_AMAZON 1, 20, 'New', 'Brand new still in the box', 4;
+EXECUTE DELIVER_TO_AMAZON 2, 21, 'Used', 'Almost like new', 4;

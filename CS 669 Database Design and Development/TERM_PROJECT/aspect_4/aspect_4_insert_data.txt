@@ -1,0 +1,8 @@
+INSERT INTO shipping_speed(shipping_id, speed)
+VALUES(1, 'one-day');
+INSERT INTO shipping_speed(shipping_id, speed)
+VALUES(2, 'two-day');
+INSERT INTO shipping_speed(shipping_id, speed)
+VALUES(3, 'standard shipping');
+INSERT INTO shipping_speed(shipping_id, speed)
+VALUES(4, 'super saver shipping');

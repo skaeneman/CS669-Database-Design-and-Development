@@ -1,0 +1,5 @@
+-- create index on shipment_id column of package table 
+-- index put on shipment_id because it's a foreign key and used
+-- in a join statement
+CREATE INDEX idx_shipment_id
+ON package (shipment_id);

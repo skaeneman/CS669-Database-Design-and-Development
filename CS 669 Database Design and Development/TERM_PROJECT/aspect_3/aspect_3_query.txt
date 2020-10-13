@@ -1,0 +1,11 @@
+EXECUTE ADD_ACCOUNT 20, 'scott_1','Test_name','Scott', '123 fake address', '617-123-4567', 'scott@somewhere.com';
+EXECUTE ADD_ACCOUNT 21, 'scott_2','Test_name','Scott', '123 fake address', '617-123-4567', 'scott@somewhere.com';
+EXECUTE ADD_ACCOUNT 22, 'scott_3','Test_name','Scott', '123 fake address', '617-123-4567', 'scott@somewhere.com';
+EXECUTE ADD_ACCOUNT 23, 'scott_4','Test_name','Scott', '123 fake address', '617-123-4567', 'scott@somewhere.com';
+EXECUTE ADD_ACCOUNT 24, 'scott_5','Test_name','Scott', '123 fake address', '617-123-4567', 'scott@somewhere.com';
+EXECUTE ADD_ACCOUNT 25, 'scott_6','Test_name','Scott', '123 fake address', '617-123-4567', 'scott@somewhere.com';
+
+SELECT last_name, COUNT(*) AS last_name_count
+FROM account
+GROUP BY last_name
+HAVING COUNT(last_name) >= 4

@@ -1,0 +1,96 @@
+CREATE OR ALTER PROCEDURE SHIP_PRODUCTS 
+ @cust_first VARCHAR(255), -- customer first name
+ @cust_last VARCHAR(255) -- customer last name
+AS 
+BEGIN
+	-- Error checking to make sure value isn't null
+	IF @cust_first IS NULL OR @cust_last IS NULL
+		RAISERROR('The first or last name is null.', 14, 1);
+	ELSE
+
+		IF EXISTS (SELECT customer_first, customer_last FROM orders 
+		WHERE customer_first = @cust_first and customer_last = @cust_last)
+		--BEGIN
+			-- do something
+		--END
+
+		-- Get the account_id and address from account table
+		DECLARE @account_id DECIMAL(10);
+		DECLARE @acct_address VARCHAR(255);
+		SELECT @account_id = account_id, @acct_address = address
+				   FROM account 
+				   WHERE first_name = @cust_first AND
+				   last_name = @cust_last;
+		BEGIN
+			-- insert account_id and address into shipment table
+			IF @account_id IS NOT NULL AND @acct_address IS NOT NULL
+				INSERT INTO shipment(account_id, shipment_address)
+				VALUES(@account_id, @acct_address);
+			ELSE
+				RAISERROR('account_id is null.', 14, 1);
+		END
+
+		-- joins shipment and account tables, creates variables
+		DECLARE @f_name VARCHAR(50);
+		DECLARE @l_name VARCHAR(50);
+		DECLARE @acct_id DECIMAL(10);
+		DECLARE @shipmt_id DECIMAL(10);
+
+		SELECT @f_name = account.first_name, @l_name = account.last_name, 
+		@acct_id = account.account_id, @shipmt_id = shipment.shipment_id 
+		FROM account
+		JOIN shipment ON shipment.account_id = account.account_id;
+
+		-- sets up a few variables from orders table
+		DECLARE @ord_id DECIMAL(10);
+		DECLARE @ord_f VARCHAR(50);
+		DECLARE @ord_l VARCHAR(50);
+
+		-- find how many orders a customer has made
+		DECLARE @order_count DECIMAL(10);
+		SELECT @order_count = COUNT(order_id)
+		FROM orders
+		WHERE customer_first = @cust_first AND customer_last = @cust_last;
+
+		-- iterate through the orders
+		WHILE @order_count > 0
+		BEGIN
+
+		-- get customers orders from orders table
+		SELECT @ord_f = customer_first, @ord_l = customer_last,
+		@ord_id = order_id
+		FROM orders
+		WHERE customer_first = @cust_first AND customer_last = @cust_last;
+
+		-- populate package table
+		IF @f_name = @ord_f AND @l_name = @ord_l
+		BEGIN
+			INSERT INTO package(order_id, shipment_id) 
+			VALUES(@ord_id, @shipmt_id);
+			
+			-- gets the last record added to package table
+			DECLARE @package_id DECIMAL(10);
+			SELECT TOP 1 @package_id = package_id 
+			FROM package ORDER BY package_id DESC;
+
+			-- add tracking id to a package (populates identifier table)
+			INSERT INTO identifier(package_id)
+			VALUES(@package_id);
+
+			-- create notification by populating table
+			DECLARE @identifier_id DECIMAL(10);
+			SELECT TOP 1 @identifier_id = identifier_id 
+			FROM identifier ORDER BY identifier_id DESC;
+
+			INSERT INTO notifications(package_id, identifier_id, account_id)
+			VALUES(@package_id, @identifier_id, @acct_id);
+			
+			-- decrements count in the while loop
+			SET @order_count = @order_count - 1;
+		END
+		END --ends while
+
+END; -- ends proc
+
+-- product_id, seller_id, condition, description, unit count
+EXECUTE SHIP_PRODUCTS 'john', 'ozbourne';

@@ -1,0 +1,81 @@
+
+CREATE OR ALTER PROCEDURE PURCHASE_PRODUCT 
+ @account_id DECIMAL(10),  -- account ID of the customer
+ @shipping_id DECIMAL(10), -- shipping ID from shipping_speed table
+ @seller_product_id DECIMAL(10), -- product ID in the sellers_inventory table
+ @purchase_count DECIMAL(10) -- the number of purchases to make
+AS 
+BEGIN
+	-- loops to generate multiple purchases
+	DECLARE @i DECIMAL
+	SET @i = 1
+
+	WHILE (@i <= @purchase_count)
+	BEGIN
+
+	-- get the sellers inventory_id based off of the product selected
+	DECLARE @seller_inventory_id DECIMAL(10)
+	SET @seller_inventory_id = (SELECT TOP 1 inventory_id 
+								FROM sellers_inventory
+								WHERE product_id = @seller_product_id)
+
+	-- ensure the product_id entered actually exists in the sellers_inventory table
+	IF @seller_inventory_id IS NOT NULL
+	BEGIN
+		-- insert data into customer table
+		INSERT INTO customer(account_id, shipping_id, inventory_id)
+		VALUES(@account_id, @shipping_id, @seller_inventory_id);
+
+		--=============================================================
+		-- Populate the order table
+		--=============================================================
+		DECLARE @seller_f VARCHAR(255)
+		DECLARE @seller_l VARCHAR(255)
+		SELECT @seller_f = seller.seller_first, @seller_l = seller.seller_last 
+		FROM seller
+		JOIN sellers_inventory ON seller.seller_id = sellers_inventory.seller_id
+		WHERE sellers_inventory.inventory_id = @seller_inventory_id
+
+		DECLARE @customer_f VARCHAR(255)
+		DECLARE @customer_l VARCHAR(255)
+		DECLARE @customer_address VARCHAR(255)
+		DECLARE @customer_id DECIMAL(10)
+		SELECT @customer_f = account.first_name, @customer_l = account.last_name, 
+			   @customer_id = account.account_id, @customer_address = account.address
+		FROM customer
+		JOIN sellers_inventory ON customer.inventory_id = sellers_inventory.inventory_id
+		JOIN account ON customer.account_id = account.account_id
+		WHERE sellers_inventory.inventory_id = @seller_inventory_id
+
+		INSERT INTO orders(customer_first, customer_last, customer_address, product_id, seller_first, seller_last)
+		VALUES(@customer_f, @customer_l, @customer_address, @seller_product_id, @seller_f, @seller_l)
+
+		--=============================================================================
+		-- Reset the customers cart after an order is processed
+		--=============================================================================
+		DELETE FROM customer WHERE inventory_id = @seller_inventory_id
+
+		--=============================================================================
+		-- Delete record from the sellers inventory
+		--=============================================================================
+		DELETE FROM sellers_inventory WHERE inventory_id = @seller_inventory_id
+		
+	END
+	ELSE
+		RAISERROR('The product id selected does not exist', 14, 1)
+
+	-- increments the loop
+	SET @i = @i + 1;  
+	END-- ends while
+
+END; -- ends proc
+
+
+
+-- REMEMBER TO CHANGE YOUR ACCOUNT ID TO DIFFERENT USERS WHEN TESTING
+-- your account_id, shipping_id, product_id, purchase_count
+EXECUTE PURCHASE_PRODUCT 90, 2, 1, 1;
+EXECUTE PURCHASE_PRODUCT 91, 3, 2, 3;
+
+
+

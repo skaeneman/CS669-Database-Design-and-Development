@@ -1,0 +1,9 @@
+SELECT seller_id, product_id, COUNT(*) AS unit_count
+FROM sellers_inventory
+GROUP BY product_id, seller_id 
+HAVING COUNT(*) < 11 AND seller_id = 20
+
+SELECT seller_id, product_id, COUNT(*) AS unit_count
+FROM sellers_inventory
+GROUP BY product_id, seller_id 
+HAVING COUNT(*) < 11 AND seller_id = 21

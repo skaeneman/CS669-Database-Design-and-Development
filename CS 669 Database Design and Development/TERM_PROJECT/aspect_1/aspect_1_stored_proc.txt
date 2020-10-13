@@ -1,0 +1,25 @@
+CREATE OR ALTER PROCEDURE ADD_NEW_PRODUCT 
+ @product_id DECIMAL(10), -- the product ID
+ @category_id DECIMAL(10), -- the category ID (foreign key reference)
+ @prod_name VARCHAR(255), -- product name
+ @description VARCHAR(255), -- product description
+ @price DECIMAL(10) --product price
+AS 
+BEGIN
+-- inserts data into the 'product table'
+INSERT INTO PRODUCT
+(product_id, category_id, prod_name, description, price)
+VALUES(@product_id, @category_id, @prod_name, @description, @price);
+	--================================================================================
+	-- checks if a product is already in the product 'listing' table
+	-- if it's not an entry in the 'listing' table is created
+	--================================================================================
+	IF NOT EXISTS (SELECT 1 FROM listing WHERE product_id = @product_id)
+	BEGIN
+		INSERT INTO listing(product_id, prod_name, description, price)
+		VALUES(@product_id, @prod_name, @description, @price);
+	END
+END;
+
+EXECUTE ADD_NEW_PRODUCT 1, 2,'Self-driving video camera','This camera will automatically follow you around', 29
+EXECUTE ADD_NEW_PRODUCT 2, 2,'Holographic keyboard','3-d keyboard projection.', 18

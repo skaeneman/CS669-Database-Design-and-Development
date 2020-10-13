@@ -1,0 +1,24 @@
+CREATE OR ALTER PROCEDURE ADD_ACCOUNT 
+ @account_id DECIMAL(10),  -- account ID
+ @username VARCHAR(255),  --username of account
+ @last_name VARCHAR(255),  -- user's last name
+ @first_name VARCHAR(255),  --users, first name
+ @address VARCHAR(255),  -- user address
+ @phone VARCHAR(255),  -- user phone number
+ @email VARCHAR(255)  -- user email account
+AS 
+BEGIN
+	-- if the account doesn't already exist it creates it
+	IF NOT EXISTS (SELECT * FROM account WHERE account_id = @account_id)
+	    BEGIN
+			INSERT INTO account(account_id, username, last_name, first_name, address, phone, email)
+			VALUES(@account_id, @username, @last_name, @first_name, @address, @phone, @email);
+	    END 
+	ELSE IF EXISTS (SELECT * FROM account WHERE account_id = @account_id)
+	RAISERROR('Account already exists', 14, 1);
+		
+END; -- ends proc
+
+-- account_id, username, last name, first name, address, phone, email
+EXECUTE ADD_ACCOUNT 90, 'scott99','Kaeneman','Scott', '123 fake address', '617-123-4567', 'scott@somewhere.com';
+EXECUTE ADD_ACCOUNT 91, 'harryc123','Coffield','Harry', '456 fake street', '617-981-5678', 'harry@somewhere.com';

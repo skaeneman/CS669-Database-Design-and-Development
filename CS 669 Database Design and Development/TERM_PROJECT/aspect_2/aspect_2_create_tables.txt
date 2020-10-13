@@ -1,0 +1,21 @@
+CREATE TABLE unit(
+product_id DECIMAL(10) NOT NULL,
+seller_id DECIMAL(10) NOT NULL,
+condition VARCHAR(255) NOT NULL,
+description VARCHAR(255) NOT NULL,
+FOREIGN KEY (product_id) REFERENCES product,
+FOREIGN KEY (seller_id) REFERENCES seller);
+
+
+CREATE TABLE seller(
+seller_id DECIMAL(10) NOT NULL,
+seller_first VARCHAR(255) NOT NULL,
+seller_last VARCHAR(255) NOT NULL,
+PRIMARY KEY (seller_id));
+
+
+CREATE TABLE sellers_inventory(
+seller_id DECIMAL(10) NOT NULL,
+product_id DECIMAL(10) NOT NULL,
+FOREIGN KEY (seller_id) REFERENCES seller,
+FOREIGN KEY (product_id) REFERENCES product);

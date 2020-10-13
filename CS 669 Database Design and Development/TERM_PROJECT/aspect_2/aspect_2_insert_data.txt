@@ -1,0 +1,4 @@
+INSERT INTO seller(seller_id, seller_first, seller_last)
+VALUES(20, 'Jon', 'Smith');
+INSERT INTO seller(seller_id, seller_first, seller_last)
+VALUES(21, 'Jane', 'Doe');

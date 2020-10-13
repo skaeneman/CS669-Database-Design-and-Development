@@ -1,0 +1,32 @@
+
+CREATE TABLE shipment(
+shipment_id DECIMAL(10) IDENTITY(1,1) NOT NULL,
+account_id DECIMAL(10) NOT NULL,
+shipment_address VARCHAR(255) NOT NULL,
+PRIMARY KEY (shipment_id),
+FOREIGN KEY (account_id) REFERENCES account);
+
+CREATE TABLE package(
+package_id DECIMAL(10) IDENTITY(1,1) NOT NULL,
+order_id DECIMAL(10) NOT NULL,
+shipment_id DECIMAL(10) NOT NULL,
+PRIMARY KEY (package_id),
+FOREIGN KEY (order_id) REFERENCES orders,
+FOREIGN KEY (shipment_id) REFERENCES shipment);
+
+CREATE TABLE identifier(
+identifier_id DECIMAL(10) IDENTITY(1000,1) NOT NULL,
+package_id DECIMAL(10) NOT NULL,
+PRIMARY KEY (identifier_id),
+FOREIGN KEY (package_id) REFERENCES package);
+
+CREATE TABLE notifications(
+notification_id DECIMAL(10) IDENTITY(50,1) NOT NULL,
+account_id DECIMAL(10) NOT NULL,
+package_id DECIMAL(10) NOT NULL,
+identifier_id DECIMAL(10) NOT NULL,
+PRIMARY KEY (notification_id),
+FOREIGN KEY (account_id) REFERENCES account,
+FOREIGN KEY (package_id) REFERENCES package,
+FOREIGN KEY (identifier_id) REFERENCES identifier);
+

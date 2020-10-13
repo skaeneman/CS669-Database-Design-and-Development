@@ -1,0 +1,29 @@
+--CREATE TABLES
+
+
+CREATE TABLE category(
+category_id DECIMAL(10) IDENTITY(1,1) NOT NULL,
+name VARCHAR(255) NOT NULL,
+description VARCHAR(255) NOT NULL,
+PRIMARY KEY (category_id));
+
+CREATE TABLE product(
+product_id DECIMAL(10) NOT NULL,
+category_id DECIMAL(10) NOT NULL,
+prod_name VARCHAR(255) NOT NULL,
+description VARCHAR(255) NOT NULL,
+price DECIMAL(10) NOT NULL,
+PRIMARY KEY (product_id),
+FOREIGN KEY (category_id) REFERENCES category);
+
+CREATE TABLE listing(
+product_id DECIMAL(10) NOT NULL,
+prod_name VARCHAR(255) NOT NULL,
+description VARCHAR(255) NOT NULL,
+price DECIMAL(10) NOT NULL,
+PRIMARY KEY (product_id),
+FOREIGN KEY (product_id) REFERENCES product);
+
+
+
+

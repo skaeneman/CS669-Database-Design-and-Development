@@ -1,0 +1,6 @@
+-- selects package count for each user, puts in descending order
+SELECT shipment.account_id, COUNT(package_id) AS package_count
+FROM package
+JOIN shipment ON package.shipment_id = shipment.shipment_id
+GROUP BY shipment.account_id
+ORDER BY COUNT(package_id) DESC;

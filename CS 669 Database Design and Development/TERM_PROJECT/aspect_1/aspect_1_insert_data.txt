@@ -1,0 +1,8 @@
+
+INSERT INTO CATEGORY (NAME, DESCRIPTION)
+VALUES('Computers', 'Laptops, Desktops, Tablets');
+INSERT INTO CATEGORY (NAME, DESCRIPTION)
+VALUES('Electronics', 'Gadgets, phones, video cameras');
+INSERT INTO CATEGORY (NAME, DESCRIPTION)
+VALUES('Appliances', 'Refrigerators, toasters, ovens');
+

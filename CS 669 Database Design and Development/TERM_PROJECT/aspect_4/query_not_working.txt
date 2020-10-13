@@ -1,0 +1,24 @@
+
+
+select * 
+from orders cs1
+where exists (
+  select distinct customer_last
+  from orders cs2
+  where cs1.product_id = cs2.product_id 
+  group by cs2.product_id, customer_last
+  having count(product_id) >= 3
+  )
+
+
+EXECUTE ADD_ACCOUNT 92, 'Ozzy','Ozbourne','John', 'Birmingham UK', '617-123-4567', 'ozzy@somewhere.com';
+EXECUTE ADD_ACCOUNT 93, 'KidRock','Ritchie','Robert', 'Romeo Michigan', '617-981-5678', 'kidrock@somewhere.com';
+EXECUTE ADD_ACCOUNT 94, 'Metallica','Hetfield','James', 'Downey California', '617-981-5678', 'metallica@somewhere.com';
+
+EXECUTE DELIVER_TO_AMAZON 1, 20, 'New', 'Brand new still in the box', 4;
+EXECUTE DELIVER_TO_AMAZON 2, 21, 'Used', 'Almost like new', 4;
+
+-- your account_id, shipping_id, product_id, purchase_count
+EXECUTE PURCHASE_PRODUCT 92, 2, 1, 2;
+EXECUTE PURCHASE_PRODUCT 93, 3, 1, 2;
+EXECUTE PURCHASE_PRODUCT 94, 1, 1, 2;

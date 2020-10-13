@@ -1,0 +1,25 @@
+
+CREATE TABLE shipping_speed(
+shipping_id DECIMAL(10) NOT NULL,
+speed VARCHAR(255) NOT NULL,
+PRIMARY KEY (shipping_id));
+
+CREATE TABLE customer(
+customer_id DECIMAL(10) IDENTITY(1,1) NOT NULL,
+account_id DECIMAL(10) NOT NULL,
+inventory_id DECIMAL(10) NOT NULL,
+shipping_id DECIMAL(10) NOT NULL,
+PRIMARY KEY (customer_id),
+FOREIGN KEY (account_id) REFERENCES account,
+FOREIGN KEY (shipping_id) REFERENCES shipping_speed,
+FOREIGN KEY (inventory_id) REFERENCES sellers_inventory);
+
+CREATE TABLE orders(
+order_id DECIMAL(10) IDENTITY(1,1) NOT NULL,
+customer_first VARCHAR(255) NOT NULL,
+customer_last VARCHAR(255) NOT NULL,
+customer_address VARCHAR(255) NOT NULL,
+product_id DECIMAL(10) NOT NULL,
+seller_first VARCHAR(255) NOT NULL,
+seller_last VARCHAR(255) NOT NULL
+PRIMARY KEY (order_id));
